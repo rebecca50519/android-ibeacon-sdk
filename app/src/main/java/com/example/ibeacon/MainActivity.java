@@ -1,5 +1,6 @@
 package com.example.ibeacon;
 
+import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -10,11 +11,15 @@ import android.support.v7.app.AppCompatActivity;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
 import android.content.Intent;
 
+import com.chaquo.python.PyObject;
+import com.chaquo.python.Python;
+import com.chaquo.python.android.AndroidPlatform;
 import com.radiusnetworks.ibeacon.IBeaconManager;
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     private DrawerLayout drawer;
@@ -38,6 +43,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     new MessageFragment()).commit();
             navigationView.setCheckedItem(R.id.nav_beacon);
         }
+        if (! Python.isStarted()) {
+            Context context = this;
+            Python.start(new AndroidPlatform(context));
+        }
     }
 
     @Override
@@ -46,6 +55,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             case R.id.nav_beacon:
                 getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
                         new MessageFragment()).commit();
+                Intent beacon_Intent = new Intent(this,MonitoringActivity.class);
+                this.startActivity(beacon_Intent);
+                verifyBluetooth();
                 break;
             case R.id.nav_Popular:
                 getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,

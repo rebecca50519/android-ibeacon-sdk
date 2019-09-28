@@ -21,6 +21,9 @@ import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.chaquo.python.PyObject;
+import com.chaquo.python.Python;
+import com.chaquo.python.android.AndroidPlatform;
 import com.google.gson.Gson;
 import com.radiusnetworks.ibeacon.IBeacon;
 import com.radiusnetworks.ibeacon.IBeaconConsumer;
@@ -49,7 +52,11 @@ public class MonitoringActivity extends Activity implements IBeaconConsumer  {
         adapter = new BeaconAdapter();
         list.setAdapter(adapter);
         inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-
+        setContentView(R.layout.activity_main);
+        if (! Python.isStarted()) {
+            Context context = this;
+            Python.start(new AndroidPlatform(context));
+        }
     }
 
     @Override
@@ -167,8 +174,12 @@ public class MonitoringActivity extends Activity implements IBeaconConsumer  {
         runOnUiThread(new Runnable() {
             public void run() {
 
-
-                if(arrayL.size()>=3){
+                //判斷接受beacon參數大於3
+                if(arrayL.size()>=1){
+                  /*  Python py = Python.getInstance();
+                    PyObject pym = py.getModule("read_location");
+                    PyObject pyf = pym.callAttr("test",177,55,35);
+                    Log.d("msg","pyf="+pyf.toString());*/
 
                     List<HashMap<String,String>>  List = new ArrayList<>();
                     for(int i=1;i<=arrayL.size();i++){
@@ -197,6 +208,5 @@ public class MonitoringActivity extends Activity implements IBeaconConsumer  {
     }
     public void getData(View view){
             Log.d("msg","beaconJ="+json);
-
     }
 }
